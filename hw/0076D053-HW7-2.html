@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Local Storage</title>
+    <style type="text/CSS">
+        table {
+        width: 90%;
+        border-collapse: collapse;
+        background-color: lightblue;
+        font-family: Perpetua;
+      }
+
+      table,
+      td,
+      th {
+        border: 1px solid black;
+        padding: 4px;
+      }
+
+      th {
+        text-align: center;
+        color: white;
+        background-color: darkblue;
+      }
+
+      tr.oddrow {
+        background-color: white;
+      }
+
+      td {
+        text-align: center;
+      }
+    </style>
+    <script type="text/javascript">
+        function Book(title, author, year, url) {
+            this.title = title;
+            this.author = author;
+            this.year = year;
+            this.url = url;
+        }
+
+        function store() {
+            let title = document.getElementById("title").value;
+            let author = document.getElementById("author").value;
+            let year = document.getElementById("year").value;
+            let url = document.getElementById("url").value;
+
+            let book = new Book(title, author, year, url);
+            localStorage.setItem("ntou-" + Date.now(), JSON.stringify(book));
+
+            // let table = document.getElementById("displayTable");
+            // table.innerHTML += "<tr><th>" + "title" + "</th></tr>"
+            showAll();
+        }
+
+        function showAll() {
+            let values = [];
+            let keys = Object.keys(localStorage);
+            let i = keys.length;
+
+            while (i--) {
+                values.push(localStorage.getItem(keys[i]));
+            }
+
+            let show = "<table><thead><tr><th>Title</th><th>Author</th><th>Year</th><th>URL</th></tr></thead><tbody>";
+
+            for (let i = 0; i < values.length; i++) {
+                show += "<tr>";
+                let obj = JSON.parse(values[i]);
+                show += "<td>" + obj.title + "</td>";
+                show += "<td>" + obj.author + "</td>";
+                show += "<td>" + obj.year + "</td>";
+                show += "<td><a href='" + obj.url + "'>" + obj.url + "</a></td>";
+                show += "</tr>";
+            }
+
+            show += "</tbody></table>";
+            document.getElementById("display").innerHTML = show;
+        }
+
+        function clear() {
+            alert("All items were removed!");
+            localStorage.clear();
+            showAll();
+        }
+
+        function start() {
+            document.getElementById("addButton").addEventListener("click", store);
+            document
+                .getElementById("removeAllButton")
+                .addEventListener("click", clear);
+            showAll();
+        }
+
+        window.addEventListener("load", start);
+    </script>
+</head>
+
+<body>
+    <a href="lemon37564.github.io/hw/0076D053-HW7-2.html">GitHub Link</a>
+    <form action="#">
+        <p>
+            <label>Book Title:<input id="title" /></label>
+            <label>Author(s):<input id="author" /></label>
+            <label>Year:<input id="year" /></label>
+            <label>Book URL:<input id="url" /></label>
+        </p>
+        <p>
+            <input type="button" value="Add New Item" id="addButton" />
+            <input type="button" value="Remove All Items" id="removeAllButton" />
+        </p>
+    </form>
+    <hr />
+    <div id="display"></div>
+</body>
+
+</html>
