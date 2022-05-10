@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>test</title>
+    <meta charset="UTF-8">
+
+    <style type="text/css">
+        * {
+            font-family: Helvetica;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        #loading {
+            position: absolute;
+            left: 40%;
+            top: 40%;
+        }
+
+        .wavy {
+            position: relative;
+        }
+
+        .wavy span {
+            position: relative;
+            display: inline-block;
+            color: black;
+            font-size: 5rem;
+            animation: animate 2.2s ease-in-out infinite;
+            animation-delay: calc(.2s * var(--i));
+            /* animation-duration: 3s; */
+        }
+
+        @keyframes animate {
+            0% {
+                transform: translateY(0px)
+            }
+
+            20% {
+                transform: translateY(-32px)
+            }
+
+            40%,
+            100% {
+                transform: translateY(0px)
+            }
+        }
+
+        #percentage {
+            margin: 0;
+            font-size: 10rem;
+            text-align: center;
+        }
+
+        .itemwait {
+            position: absolute;
+            width: 50rem;
+            height: 50rem;
+            top: calc((100% - 50rem) / 2);
+            left: calc((100% - 50rem) / 2);
+        }
+
+        #progress {
+            stroke-dasharray: 2010;
+            stroke-dashoffset: 2010;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+    <script src="test.js"></script>
+    <script>
+        const TOTAL = 2010;
+        let percentage = null, progress = null;
+        var engine;
+
+        function printProgress(current, total) {
+            let prog = current * 100 / total;
+            percentage.innerHTML = String(prog).substr(0, 4) + "%";
+            setCirclePercent(prog)
+        }
+
+        function setCirclePercent(percent) {
+            progress.style.strokeDashoffset = TOTAL - (percent * TOTAL / 100);
+        }
+
+        function start() {
+            percentage = document.getElementById("percentage");
+            progress = document.getElementById("progress");
+            progress.style.strokeDashoffset = TOTAL;
+            Promise.all(
+                [
+                    engine = new Engine({"args":[],"canvasResizePolicy":2,"executable":"test","experimentalVK":false,"fileSizes":{"test.pck":34816,"test.wasm":13351459},"focusCanvas":true,"gdnativeLibs":[]}),
+                ]
+            ).then(() => {
+                return engine.startGame({ onProgress: printProgress });
+            }
+            ).then(() => {
+                document.getElementById("loading").remove();
+            });
+        }
+
+        window.addEventListener("load", start, false);
+    </script>
+
+    <div id="loading">
+        <div class="wavy">
+            <span style="--i:1">L</span>
+            <span style="--i:2">o</span>
+            <span style="--i:3">a</span>
+            <span style="--i:4">d</span>
+            <span style="--i:5">i</span>
+            <span style="--i:6">n</span>
+            <span style="--i:7">g</span>
+            <span style="--i:8">.</span>
+            <span style="--i:9">.</span>
+            <span style="--i:10">.</span>
+        </div>
+        <div style>
+            <p id="percentage">0%</p>
+        </div>
+        <svg version="1.1" class='itemwait'>
+            <circle id="progress" cx="26rem" cy="26rem" r="20rem" stroke="green" stroke-width="5"
+                fill="transparent" />
+        </svg>
+    </div>
+
+</body>
+
+</html>
